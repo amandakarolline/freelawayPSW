@@ -8,6 +8,13 @@
 {% block 'body' %}
     <div class="box">
         <form action="{% url 'logar' %}" method="post">{% csrf_token %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {{message.tags}}">
+                        {{message}}
+                    </div>
+                {% endfor %}
+            {% endif %}
 
             <h1 class="titulo font-degrade borda-bottom-degrade">LOGAR</h2>
             <br>

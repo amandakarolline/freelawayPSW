@@ -1,13 +1,14 @@
-from django.contrib import messages
+from django.contrib import messages, auth
 from django.contrib.auth.models import User
 from django.contrib.messages import constants
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
 
 # Create your views here.
 def cadastro(request):
     if request.method == "GET":
+        if request.user.is_authenticated:
+            return redirect('/plataforma')
         return render(request, 'cadastro.html')
     elif request.method == "POST":
         username = request.POST.get('username')
@@ -25,7 +26,7 @@ def cadastro(request):
         user = User.objects.filter(username=username)
 
         if user.exists():
-            messages.add_message(request, constants.ERROR, 'Já existe um usário com esse username')
+            messages.add_message(request, constants.ERROR, 'Já existe um usuário com esse username')
             return redirect('/auth/cadastro')
 
         try:
@@ -41,6 +42,8 @@ def cadastro(request):
 
 def logar(request):
     if request.method == "GET":
+        if request.user.is_authenticated:
+            return redirect('/plataforma')
         return render(request, 'logar.html')
     elif request.method == "POST":
         username = request.POST.get('username')
@@ -54,3 +57,8 @@ def logar(request):
         else:
             auth.login(request, usuario)
             return redirect('/')
+
+
+def sair(request):
+    auth.logout(request)
+    return redirect('/auth/logar')
